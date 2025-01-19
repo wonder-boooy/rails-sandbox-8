@@ -1,5 +1,17 @@
 version: 2.1
 jobs:
+  bundle_install:
+    docker:
+      - image: cimg/ruby:3.3
+        auth:
+          username: wonderboooy
+          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            bundle install
   scan_ruby:
     docker:
       - image: cimg/ruby:3.0
@@ -40,6 +52,13 @@ jobs:
 workflows:
   CI:
     jobs:
-      - scan_ruby
-      - scan_js
-      - lint
+      - bundle_install
+      - scan_ruby:
+          requires:
+            - bundle_install
+      - scan_js:
+          requires:
+            - bundle_install
+      - lint:
+          requires:
+            - bundle_install
