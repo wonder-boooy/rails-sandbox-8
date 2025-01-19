@@ -1,4 +1,9 @@
 <%= content_for(:title) { 'ホーム画面' } %>
+<% content_for(:sample) do %>
+  <p>content_forのコンポーネント的な使い方サンプル</p>
+<% end %>
 
 <h1>Home#index</h1>
 <p>Find me in app/views/home/index.html.erb</p>
+
+<%= content_for(:sample)%>
