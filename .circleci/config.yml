@@ -5,48 +5,65 @@ jobs:
       - image: cimg/ruby:3.3
         auth:
           username: wonderboooy
-          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - run:
           name: Install dependencies
           command: |
+            bundle config set path 'vendor/bundle'
             bundle install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor/bundle
+            - bin # binstubsが必要な場合
+
   scan_ruby:
     docker:
       - image: cimg/ruby:3.0
         auth:
           username: wonderboooy
-          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Scan for common Rails security vulnerabilities using static analysis
           command: |
+            bundle config set path 'vendor/bundle'
+            bundle install
             bin/brakeman --no-pager
+
   scan_js:
     docker:
       - image: cimg/node:17.2
         auth:
           username: wonderboooy
-          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - run:
           name: Scan for security vulnerabilities in JavaScript dependencies
           command: |
             bin/importmap audit
+
   lint:
     docker:
       - image: cimg/ruby:3.0
         auth:
           username: wonderboooy
-          password: $DOCKERHUB_PASSWORD # context / project UI env-var reference
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: Lint code for consistent style
           command: |
+            bundle config set path 'vendor/bundle'
+            bundle install
             bin/rubocop -f github
 
 workflows:
