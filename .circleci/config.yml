@@ -21,7 +21,7 @@ jobs:
 
   scan_ruby:
     docker:
-      - image: cimg/ruby:3.0
+      - image: cimg/ruby:3.3
         auth:
           username: wonderboooy
           password: $DOCKERHUB_PASSWORD
@@ -51,7 +51,7 @@ jobs:
 
   lint:
     docker:
-      - image: cimg/ruby:3.0
+      - image: cimg/ruby:3.3
         auth:
           username: wonderboooy
           password: $DOCKERHUB_PASSWORD
